@@ -55,7 +55,7 @@ DOWNLOADING = u"Downloading Dropbox... %d%%"
 UNPACKING = u"Unpacking Dropbox... %d%%"
 
 PARENT_DIR = os.path.expanduser("~")
-DROPBOXD_PATH = "%s/.dropbox-dist/dropboxd" % PARENT_DIR
+DROPBOXD_PATH = ".dropbox-dist/dropboxd" # % PARENT_DIR
 DESKTOP_FILE = u"/usr/share/applications/dropbox.desktop"
 
 enc = locale.getpreferredencoding()
@@ -153,7 +153,7 @@ def plat():
         FatalVisibleError("Platform not supported")
 
 def is_dropbox_running():
-    pidfile = os.path.expanduser("~/.dropbox/dropbox.pid")
+    pidfile = os.path.expanduser(".dropbox/dropbox.pid")
 
     try:
         with open(pidfile, "r") as f:
@@ -583,7 +583,7 @@ class DropboxCommand(object):
         self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.s.settimeout(timeout)
         try:
-            self.s.connect(os.path.expanduser(u'~/.dropbox/command_socket'))
+            self.s.connect(os.path.expanduser(u'.dropbox/command_socket'))
         except socket.error, e:
             raise DropboxCommand.CouldntConnectError()
         self.f = self.s.makefile("r+", 4096)
@@ -699,7 +699,8 @@ def requires_dropbox_running(meth):
     return newmeth
 
 def start_dropbox():
-    db_path = os.path.expanduser(u"~/.dropbox-dist/dropboxd").encode(sys.getfilesystemencoding())
+    db_path = os.path.expanduser(u".dropbox-dist/dropboxd").encode(sys.getfilesystemencoding())
+    
     if os.access(db_path, os.X_OK):
         f = open("/dev/null", "w")
         # we don't reap the child because we're gonna die anyway, let init do it
