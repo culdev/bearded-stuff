@@ -1,7 +1,7 @@
 <?php
 // CLI
 if(count($argv) <= 1)
-    die("You must supply a dir argument, e.g php $argv[0] testfolder\n");
+    die("You must supply a directory argument, e.g php $argv[0] testfolder\n");
 
 $dir = $argv[1];
 if($handle = opendir($dir))
