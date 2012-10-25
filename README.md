@@ -1,4 +1,4 @@
 bearded-stuff
 =============
 
-Some scripts
+Awesome scripts!
