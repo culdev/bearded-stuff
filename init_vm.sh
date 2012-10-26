@@ -31,7 +31,7 @@ echo "# Dotdeb" >> $SOURCES
 echo "deb http://packages.dotdeb.org squeeze all" >> $SOURCES
 echo "deb-src http://packages.dotdeb.org squeeze all" >> $SOURCES
 
-wget -o /tmp/dotdeb.gpg http://www.dotdeb.org/dotdeb.gpg
+wget -O /tmp/dotdeb.gpg http://www.dotdeb.org/dotdeb.gpg
 cat /tmp/dotdeb.gpg | apt-key add -
 rm /tmp/dotdeb.gpg
 
