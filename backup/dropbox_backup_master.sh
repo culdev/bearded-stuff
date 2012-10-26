@@ -11,8 +11,8 @@ DATE=`date '+%Y%m%d'`
 MYSQLLOCAL=$ARCHIVES"/Hostname-mysql"
 MYSQLDROPBOX=$DROPBOX"/mysql/Hostname-mysql"
 
-# Remove previous mysql backups
+# Remove previous backups
 find $DROPBOX/mysql/*mysql* -exec rm {} \;
 
-# Copy todays mysql backup
+# Copy todays backups
 openssl des3 -salt -k $PASSPHRASE -in $MYSQLLOCAL.$DATE.master.tar.gz -out $MYSQLDROPBOX.$DATE.master.tar.gz.encrypted
