@@ -1,0 +1,1 @@
+These scripts rely on backup-manager to tar backup folders before they are executed.
