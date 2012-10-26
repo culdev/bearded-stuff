@@ -6,4 +6,4 @@ DATE=`date '+%Y%m%d'`
 find /path/to/backup/*etc* -mtime +15 -exec rm {} \;
 
 # /etc
-tar cvf /path/to/backup/etc.$DATE.tar /etc
+tar cvfz /path/to/backup/etc.$DATE.tar.gz /etc
