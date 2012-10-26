@@ -1,1 +1,1 @@
-These scripts rely on backup-manager to tar backup folders before they are executed.
+The dropbox scripts rely on backup-manager to tar backup folders before they are executed.
