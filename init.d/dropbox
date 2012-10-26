@@ -1,0 +1,64 @@
+### BEGIN INIT INFO
+# Provides:          dropbox
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     false
+# Short-Description: dropbox service
+### END INIT INFO
+#!/bin/sh
+# dropbox service
+DROPBOX_USER="dropbox"
+
+DAEMON=/home/dropbox/.dropbox-dist/dropbox
+
+start() {
+    echo "Starting dropbox..."
+    if [ -x $DAEMON ]; then
+	start-stop-daemon -b -o -c $DROPBOX_USER -S -u $DROPBOX_USER -x $DAEMON
+    fi
+}
+
+stop() {
+    echo "Stopping dropbox..."
+    if [ -x $DAEMON ]; then
+        start-stop-daemon -o -c $DROPBOX_USER -K -u $DROPBOX_USER -x $DAEMON
+    fi
+}
+
+status() {
+    dbpid=`pgrep -u $DROPBOX_USER dropbox`
+    if [ -z $dbpid ] ; then
+        echo "dropboxd for USER $DROPBOX_USER: not running."
+    else
+        echo "dropboxd for USER $DROPBOX_USER: running (pid $dbpid)"
+    fi
+}
+
+case "$1" in
+
+    start)
+        start
+        ;;
+
+    stop)
+        stop
+        ;;
+
+    restart|reload|force-reload)
+        stop
+        start
+        ;;
+
+    status)
+        status
+        ;;
+
+    *)
+        echo "Usage: /etc/init.d/dropbox {start|stop|reload|force-reload|restart|status}"
+        exit 1
+
+esac
+
+exit 0
