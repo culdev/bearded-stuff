@@ -22,6 +22,9 @@ echo "    netmask $NETWORKNETMASK" >> $INTERFACEFILE
 echo "    gateway $NETWORKGATEWAY" >> $INTERFACEFILE
 
 echo "Updated network interfaces."
+echo "Activating network interface "$NETWORKADAPTER"..."
+ifup $NETWORKADAPTER
+echo "Activated network interface "$NETWORKADAPTER"."
 
 # Dotdeb repo
 echo "Installing dotdeb repository..."
