@@ -19,4 +19,4 @@ fi
 find $TARGETDIR/*etc* -mtime +15 -exec rm {} \;
 
 # /etc
-tar cvfz $TARGETDIR/etc.$DATE.tar.gz /etc
+tar cvfz $TARGETDIR/etc.$DATE.tar.gz -C / etc
