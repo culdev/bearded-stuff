@@ -40,6 +40,13 @@ rm /tmp/dotdeb.gpg
 
 echo "Installed dotdeb repository."
 
+# Backports
+echo "Installing Debian Backports repository..."
+echo "" >> $SOURCES
+echo "# Debian Backports" >> $SOURCES
+echo "deb http://backports.debian.org/debian-backports squeeze-backports main" >> $SOURCES
+echo "Installed Debian Backports repository."
+
 # mpt-statusd
 # Floods various logs with "mpt-statusd: detected non-optimal RAID status"
 echo "Disabling mpt-statusd..."
