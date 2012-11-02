@@ -40,7 +40,7 @@ rm /tmp/dotdeb.gpg
 
 echo "Installed dotdeb repository."
 
-# Backports
+# Debian Backports
 echo "Installing Debian Backports repository..."
 echo "" >> $SOURCES
 echo "# Debian Backports" >> $SOURCES
