@@ -1,4 +1,4 @@
 subversion mercurial git curl htop iotop
 
-Collectd:
-build-essential rrdtool librrd-dev curl libcurl4-openssl-dev libmysqld-dev
+mysql:
+mysqltuner
