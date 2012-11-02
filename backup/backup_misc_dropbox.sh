@@ -3,7 +3,8 @@
 # This script should executed every day except when the master backup is executed
 # Settings
 PASSPHRASE=""
-ARCHIVES="/var/archives"
+BASEARCHIVES="/var/archives"
+ARCHIVES=$BASEARCHIVES"/Hostname"
 BASEDROPBOX="/home/dropbox/Dropbox"
 DROPBOX=$BASEDROPBOX"/_Backups"
 
@@ -17,6 +18,15 @@ MYSQLDROPBOX=$DROPBOX"/mysql/Hostname-mysql"
 if ! grep -q $BASEDROPBOX /proc/mounts ; then
     if ! mount $BASEDROPBOX ; then
         echo "Failed to mount "$BASEDROPBOX". Exiting."
+        exit 1
+    fi
+fi
+
+# Mount $BASEARCHIVES if necessary
+# This should be disabled if $BASEARCHIVES is always mounted
+if ! grep -q $BASEARCHIVES /proc/mounts ; then
+    if ! mount $BASEARCHIVES ; then
+        echo "Failed to mount "$BASEARCHIVES". Exiting."
         exit 1
     fi
 fi
