@@ -16,6 +16,24 @@ $target = "/mnt/backup";
 date_default_timezone_set("Europe/Stockholm");
 $date = date("Ymd");
 
+/***** Dropbox Settings *****/
+// Passphrase to encrypt with
+$dbpassphrase = "";
+
+// Folders to backup without front slash
+$dbbackuparray = array("etc", "var/spool");
+
+// Time before removing old backups
+$dbtimearray = array("+1", "+1");
+
+// Folders to place backups in
+// $dbbackuparray[0] will be placed in /misc
+$dbsubfolderarray = array("/misc", "");
+
+// Folder to backup to
+$dbtarget = "/mnt/dropbox";
+$dbtargetextra = "/_Backups"; // This will be appended to $dbtarget if the mounting succeeds
+
 /***** Functions *****/
 /**
  * @return true if mounted
@@ -65,13 +83,26 @@ if(!checkMount($target))
         exit(1);
     }
 }
+if(!checkMount($dbtarget))
+{
+    $mount = mount($dbtarget);
+    if(!empty($mount))
+    {
+        echo "Failed to mount {$dbtarget}:\n";
+        var_dump($mount);
+        exit(1);
+    }
+}
 
 // Add hostname to target
 $target = $target."/".$hostname;
+$dbtarget = $dbtarget.$dbtargetextra."/".$hostname;
 
 // Check array sizes
 if(count($backuparray) != count($timearray))
     exit("Array sizes doesn't match.");
+if(count($dbbackuparray) != count($dbtimearray) || count($dbbackuparray) != count($dbsubfolderarray))
+    exit("Dropbox array sizes doesn't match.");
 
 // Loop through array
 for($i = 0; $i < count($backuparray); $i++)
@@ -84,5 +115,18 @@ for($i = 0; $i < count($backuparray); $i++)
     
     // Create tar
     output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]}"));
+}
+
+// Loop through dropbox array
+for($i = 0; $i < count($dbbackuparray); $i++)
+{
+    // Replace / with .
+    $backup = str_replace("/", ".", $dbbackuparray[$i]);
+    
+    // Remove old files
+    output(shell_exec("find {$target}/*{$backup}* -mtime {$dbtimearray[$i]} -exec rm {} \;"));
+    
+    // Create archive
+    output(shell_exec("openssl des3 -salt -k {$dbpassphrase} -in {$target}/{$backup}.{$date}.tar.gz -out {$dbtarget}{$dbsubfolderarray[$i]}/{$backup}.{$date}.tar.gz.encrypted"));
 }
 ?>
