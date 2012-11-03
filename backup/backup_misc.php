@@ -104,6 +104,10 @@ if(count($backuparray) != count($timearray))
 if(count($dbbackuparray) != count($dbtimearray) || count($dbbackuparray) != count($dbsubfolderarray))
     exit("Dropbox array sizes doesn't match.");
 
+// Check passphrase
+if(empty($dbpasshrase))
+    exit("Can't encrypt archives with empty passhrase.");
+
 // Loop through array
 for($i = 0; $i < count($backuparray); $i++)
 {
