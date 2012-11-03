@@ -134,7 +134,7 @@ for($i = 0; $i < count($dbbackuparray); $i++)
     $backup = str_replace("/", ".", $dbbackuparray[$i]);
     
     // Remove old files
-    output(shell_exec("find {$dbtarget}/*{$backup}* -mtime {$dbtimearray[$i]} -exec rm {} \;"));
+    output(shell_exec("find {$dbtarget}{$dbsubfolderarray[$i]}/*{$backup}* -mtime {$dbtimearray[$i]} -exec rm {} \;"));
     
     // Create archive
     output(shell_exec("openssl des3 -salt -k {$dbpassphrase} -in {$target}/{$backup}.{$date}.tar.gz -out {$dbtarget}{$dbsubfolderarray[$i]}/{$backup}.{$date}.tar.gz.encrypted"));
