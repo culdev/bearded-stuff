@@ -6,6 +6,9 @@ $hostname = exec('hostname');
 // Folders to backup without front slash
 $backuparray = array("etc", "var/spool");
 
+// Folders to exclude
+$backupexcludearray = array("", "");
+
 // Time before removing old backups
 $timearray = array("+15", "+15");
 
@@ -117,8 +120,11 @@ for($i = 0; $i < count($backuparray); $i++)
     // Remove old files
     output(shell_exec("find {$target}/*{$backup}* -mtime {$timearray[$i]} -exec rm {} \;"));
     
+    // Exclude folders
+    $exclude = (empty($backupexcludearray[$i]) ? "" : "--exclude ".$backupexcludearray[$i]);
+    
     // Create tar
-    output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]}"));
+    output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]} {$exclude}"));
 }
 
 // Loop through dropbox array
