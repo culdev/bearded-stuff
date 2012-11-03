@@ -83,6 +83,6 @@ for($i = 0; $i < count($backuparray); $i++)
     output(shell_exec("find {$target}/*{$backup}* -mtime {$timearray[$i]} -exec rm {} \;"));
     
     // Create tar
-    output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz"));
+    output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]}"));
 }
 ?>
