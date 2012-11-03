@@ -32,7 +32,7 @@ $dbsubfolderarray = array("/misc", "");
 
 // Folder to backup to
 $dbtarget = "/mnt/dropbox";
-$dbtargetextra = "/_Backups"; // This will be appended to $dbtarget if the mounting succeeds
+$dbtargetextra = "/backups"; // This will be appended to $dbtarget if the mounting succeeds
 
 /***** Functions *****/
 /**
@@ -105,7 +105,7 @@ if(count($dbbackuparray) != count($dbtimearray) || count($dbbackuparray) != coun
     exit("Dropbox array sizes doesn't match.");
 
 // Check passphrase
-if(empty($dbpasshrase))
+if(empty($dbpassphrase))
     exit("Can't encrypt archives with empty passhrase.");
 
 // Loop through array
