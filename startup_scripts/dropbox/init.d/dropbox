@@ -16,7 +16,7 @@ DAEMON=/home/dropbox/.dropbox-dist/dropbox
 start() {
     echo "Starting dropbox..."
     if [ -x $DAEMON ]; then
-	start-stop-daemon -b -o -c $DROPBOX_USER -S -u $DROPBOX_USER -x $DAEMON --nicelevel 15
+	start-stop-daemon -b -o -c $DROPBOX_USER -S -u $DROPBOX_USER -x $DAEMON --nicelevel 15 --iosched best-effort:4
     fi
 }
 
