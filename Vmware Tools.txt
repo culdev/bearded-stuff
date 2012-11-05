@@ -1,4 +1,4 @@
 apt-get install binutils cpp gcc make psmisc linux-headers-$(uname -r)
-tar -C /tmp -zxvf /mnt/VMwareTools-3.5.0-67921.tar.gz
+tar -C /tmp -zxvf VMwareTools-3.5.0-67921.tar.gz
 cd /tmp/vmware-tools-distrib
 ./vmware-install.pl
