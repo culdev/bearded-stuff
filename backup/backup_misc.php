@@ -37,6 +37,9 @@ $dbsubfolderarray = array("/misc", "");
 $dbtarget = "/mnt/dropbox";
 $dbtargetextra = "/backups"; // This will be appended to $dbtarget if the mounting succeeds
 
+// Set nice
+proc_nice(15);
+
 /***** Functions *****/
 /**
  * @return true if mounted
@@ -118,13 +121,13 @@ for($i = 0; $i < count($backuparray); $i++)
     $backup = str_replace("/", ".", $backuparray[$i]);
     
     // Remove old files
-    output(shell_exec("find {$target}/*{$backup}* -mtime {$timearray[$i]} -exec rm {} \;"));
+    output(shell_exec("ionice -c 3 find {$target}/*{$backup}* -mtime {$timearray[$i]} -exec rm {} \;"));
     
     // Exclude folders
     $exclude = (empty($backupexcludearray[$i]) ? "" : "--exclude ".$backupexcludearray[$i]);
     
     // Create tar
-    output(shell_exec("tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]} {$exclude}"));
+    output(shell_exec("ionice -c 3 tar cvfz {$target}/{$backup}.{$date}.tar.gz -C / {$backuparray[$i]} {$exclude}"));
 }
 
 // Loop through dropbox array
@@ -134,7 +137,7 @@ for($i = 0; $i < count($dbbackuparray); $i++)
     $backup = str_replace("/", ".", $dbbackuparray[$i]);
     
     // Remove old files
-    output(shell_exec("find {$dbtarget}{$dbsubfolderarray[$i]}/*{$backup}* -mtime {$dbtimearray[$i]} -exec rm {} \;"));
+    output(shell_exec("ionice -c 3 find {$dbtarget}{$dbsubfolderarray[$i]}/*{$backup}* -mtime {$dbtimearray[$i]} -exec rm {} \;"));
     
     // Create archive
     output(shell_exec("openssl des3 -salt -k {$dbpassphrase} -in {$target}/{$backup}.{$date}.tar.gz -out {$dbtarget}{$dbsubfolderarray[$i]}/{$backup}.{$date}.tar.gz.encrypted"));
