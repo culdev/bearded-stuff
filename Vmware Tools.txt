@@ -1,4 +1,5 @@
 apt-get install binutils cpp gcc make psmisc linux-headers-$(uname -r)
-tar -C /tmp -zxvf VMwareTools-9.0.0-782409.tar.gz
+mount /media/cdrom
+tar -C /tmp -zxvf /media/cdrom/VMwareTools-9.0.0-782409.tar.gz
 cd /tmp/vmware-tools-distrib
 ./vmware-install.pl
