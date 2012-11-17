@@ -53,3 +53,7 @@ echo "Disabling mpt-statusd..."
 /etc/init.d/mpt-statusd stop
 update-rc.d-insserv -f mpt-statusd remove
 echo "Disabled mpt-statusd."
+
+# /dev/shm
+echo "Symlinking /tmpram to /dev/shm."
+ln -s /dev/shm /tmpram
