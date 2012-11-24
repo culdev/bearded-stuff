@@ -4,15 +4,20 @@ require 'lib/Net/SSH2.php';
 require 'lib/Crypt/RSA.php';
 require 'lib/colors.php';
 
-// Remote Settings
-$server = array(0 => "serveripone", 1 => "serveriptwo");
-// Directories to backup without /, it gets added later if needed
-$dirs = array(0 => array("etc", "var"), 1 => array("home", "etc"));
-// Directories to exclude, separate with space
-$dirsblacklist = array(0 => array(), 1 => array("home/somedude"));
-$days = "+1"; // Amount of days to keep the backups
+// Date
+date_default_timezone_set("Europe/Stockholm");
+$date = date("Ymd");
 
-/ SSH Settings
+// Remote Settings
+$server = array(0 => "serverone");
+// Directories to backup without /, it gets added later if needed
+$basedir = "var/archives";
+$dirs = array(0 => array("HOSTNAME-var-lib-mysql.{$date}.master.tar.gz")); // HOSTNAME will be replaced later
+// Directories to exclude, separate with space
+$dirsblacklist = array(0 => array());
+$days = "+1"; // Amount of days to save the backups
+
+// SSH Settings
 $keyfile = "id_rsa";
 $sshuser = "backupuser";
 $tmpdir = "/tmp"; // On remote server
@@ -21,14 +26,11 @@ $ionicelevel = "3"; // must be 1 (realtime) or 2 (best-effort) or 3 (idle)
 
 // Local settings
 $archivedir = "/var/backups"; // All backups will be stored here
-$archivepass = ""; // Password for encrypted backup
-$pidfile = "/tmpram/backup.pid"; // Runtime file is saved here
+$archivepass = "1234"; // Password for encrypted backup
+$pidfile = "/tmpram/backup_dropbox_master.pid"; // Runtime file is saved here
 
 $debug = false;
 
-// Date
-date_default_timezone_set("Europe/Stockholm");
-$date = date("Ymd");
 $colors = new Colors(); // CLI colors
 $vars = array(); // temp array for error checking
 
@@ -107,13 +109,14 @@ for($s = 0; $s < count($server); $s++)
         // Go through each folder
         for($d = 0; $d < count($dirs[$s]); $d++)
         {
-            $folder = $dirs[$s][$d];
+            $folder = str_replace("HOSTNAME", $hostname, $dirs[$s][$d]); // replace HOSTNAME
             $folderexclude = $dirsblacklist[$s];
             if($debug)
                 out("Folder: {$folder}");
 
             // Replace / with .
             $folderclean = str_replace("/", ".", $folder);
+            $folder = $basedir.'/'.$folder;
 
             // Exclude folders
             $exclude = "";
@@ -130,7 +133,7 @@ for($s = 0; $s < count($server); $s++)
                 out("Files to exclude: {$exclude}");
 
             // Filenames
-            $filename = "{$folderclean}.{$date}.tar.gz.encrypted";
+            $filename = "{$folderclean}.encrypted";
             $backup = "{$tmpdir}/{$filename}";
 
             // Create tar
