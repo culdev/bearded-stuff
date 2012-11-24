@@ -148,7 +148,7 @@ for($s = 0; $s < count($server); $s++)
             if($debug && empty($vars['tar']))
                 out($colors->getColoredString("Done.", "green"));
             else if(!empty($vars['tar']))
-                throw new Exception("Failed to tar {$folder} to {$backup}:\n{$vars['tar']}");
+                out($colors->getColoredString("{$vars['tar']}"));
 
             // Calculate md5
             if($debug)
