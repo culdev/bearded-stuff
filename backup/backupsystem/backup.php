@@ -10,6 +10,7 @@ $server = array(0 => "serveripone", 1 => "serveriptwo");
 $dirs = array(0 => array("etc", "var"), 1 => array("home", "etc"));
 // Directories to exclude, separate with space
 $dirsblacklist = array(0 => array(), 1 => array("home/somedude"));
+$days = "+1"; // Amount of day to keep the backups
 
 // SSH Settings
 $keyfile = "id_rsa";
@@ -138,7 +139,7 @@ for($s = 0; $s < count($server); $s++)
 
             $vars['tar'] = $ssh->exec(
                     "nice -n {$nicelevel} ionice -c {$ionicelevel} tar zchf - -C / {$folder} {$exclude} |".
-                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k {$archivepass} |".
+                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \"{$archivepass}\" |".
                             " nice -n {$nicelevel} ionice -c {$ionicelevel} dd of={$backup} 2> /dev/null");
 
             if($debug && empty($vars['tar']))
@@ -209,6 +210,15 @@ for($s = 0; $s < count($server); $s++)
             else if(!empty($vars['tmp']))
                 throw new Exception("Failed to remove {$backup} from {$server[$s]}:\n{$vars['tmp']}");
 
+            // Remove old archives
+            if($debug)
+                echo "Removing old archives... ";
+
+            exec("nice -n {$nicelevel} ionice -c {$ionicelevel} find {$archivedir}/{$hostname}/*{$folderclean}* -mtime {$days} -exec rm {} \;");
+
+            if($debug)
+                out($colors->getColoredString("Done.", "green"));
+            
             if($debug)
                 out(" ");
         }
