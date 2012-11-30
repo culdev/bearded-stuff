@@ -6,6 +6,8 @@ NETWORKSTATICIP="10.10.1.x"
 NETWORKGATEWAY="10.10.1.1"
 NETWORKNETMASK="255.255.255.0"
 
+TMPRAM="/tmpram"
+
 echo "Edit the script before running it."
 exit 1
 
@@ -55,5 +57,21 @@ update-rc.d-insserv -f mpt-statusd remove
 echo "Disabled mpt-statusd."
 
 # /dev/shm
-echo "Symlinking /tmpram to /dev/shm."
-ln -s /dev/shm /tmpram
+echo "Symlinking $TMPRAM to /dev/shm."
+ln -s /dev/shm $TMPRAM
+
+# crontab
+echo "Installing crontab template"
+echo "MAILTO=\"\"
+SHELL=/bin/sh
+
+#minute (0-59)
+#|	hour (0-23)
+#|  |    day of the month (1-31)
+#|	|	|   month of the year (1-12 or Jan-Dec)
+#|	|	|	|   day of the week (0-6 with 0=Sun or Sun-Sat)
+#|	|	|	|	|	commands
+#|	|	|	|	|	|
+
+# Other crons
+" > $TMPRAM/cron.template

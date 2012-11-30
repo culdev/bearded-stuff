@@ -1,4 +1,4 @@
-subversion mercurial git curl htop iotop
+subversion mercurial git curl htop iotop iftop
 
 mysql:
 mysqltuner
