@@ -75,3 +75,5 @@ SHELL=/bin/sh
 
 # Other crons
 " > $TMPRAM/cron.template
+
+crontab $TMPRAM/cron.template
