@@ -15,7 +15,6 @@ $basedir = "var/archives";
 $dirs = array(0 => array("HOSTNAME-var-lib-mysql.{$date}.tar.gz")); // HOSTNAME will be replaced later
 // Directories to exclude, separate with space
 $dirsblacklist = array(0 => array());
-$days = "+1"; // Amount of days to save the backups
 
 // SSH Settings
 $keyfile = "id_rsa";
@@ -212,15 +211,6 @@ for($s = 0; $s < count($server); $s++)
                 out($colors->getColoredString("Done.", "green"));
             else if(!empty($vars['tmp']))
                 throw new Exception("Failed to remove {$backup} from {$server[$s]}:\n{$vars['tmp']}");
-
-            // Remove old archives
-            if($debug)
-                echo "Removing old archives... ";
-
-            exec("nice -n {$nicelevel} ionice -c {$ionicelevel} find {$archivedir}/{$hostname}/*{$folderclean}* -mtime {$days} -exec rm {} \;");
-
-            if($debug)
-                out($colors->getColoredString("Done.", "green"));
 
             if($debug)
                 out(" ");
