@@ -167,18 +167,12 @@ for($s = 0; $s < count($server); $s++)
             
             // Calculate md5
             if($debug)
-                echo "Calculating md5 sum... ";
-                
-            $md5 = str_replace("\n", "", exec("md5sum {$target} | awk '{ print $1 }'"));
-            
+                echo "Calculating and dumping md5 sum... ";
+
+            exec("md5sum {$target} | awk '{ print $1 }' > {$target}.md5");
+
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
-            
-            // Create md5 file
-            if($debug)
-                echo "Dumping md5 files... ";
-
-            exec("echo {$md5} > {$target}.md5");
 
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
