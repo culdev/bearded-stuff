@@ -132,83 +132,45 @@ for($s = 0; $s < count($server); $s++)
             // Filenames
             $filename = "{$folderclean}.{$date}.tar.gz.encrypted";
             $backup = "{$tmpdir}/{$filename}";
+            $target = "{$archivedir}/{$hostname}/{$filename}";
+            
+            // Create destination folder
+            if($debug)
+                echo "Creating destination folder... ";
+            if($debug && @mkdir("{$archivedir}/{$hostname}"))
+                out($colors->getColoredString("Done.", "green"));
+            else if($debug)
+                out($colors->getColoredString("Already exists.", "yellow"));
 
             // Create tar
             if($debug)
                 echo "Creating encrypted tar... ";
 
-            $vars['tar'] = $ssh->exec(
+            exec("nice -n {$nicelevel} ionice -c {$ionicelevel} ssh {$sshuser}@${server[$s]} \"".
                     "nice -n {$nicelevel} ionice -c {$ionicelevel} tar zchf - -C / {$folder} {$exclude} |".
-                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \"{$archivepass}\" |".
-                            " nice -n {$nicelevel} ionice -c {$ionicelevel} dd of={$backup} 2> /dev/null");
+                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \\\"{$archivepass}\\\"".
+                            "\" > {$target}");
 
-            if($debug && empty($vars['tar']))
+            if($debug)
                 out($colors->getColoredString("Done.", "green"));
-            else if(!empty($vars['tar']))
-                out($colors->getColoredString("{$vars['tar']}"));
 
             // Calculate md5
             if($debug)
                 echo "Calculating md5 sum... ";
 
-            $md5 = str_replace("\n", "", $ssh->exec("md5sum {$backup} | awk '{ print $1 }'"));
+            $md5 = str_replace("\n", "", exec("md5sum {$target} | awk '{ print $1 }'"));
 
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
-
-            // Create destination folder
-            if($debug)
-                echo "Creating destination folder... ";
-            if(@mkdir("{$archivedir}/{$hostname}"))
-                out($colors->getColoredString("Done.", "green"));
-            else if($debug)
-                out($colors->getColoredString("Already exists.", "yellow"));
-
-            if($debug)
-                echo "Transferring {$backup}... ";
-
-            // Transfer tar
-            $target = "{$archivedir}/{$hostname}/{$filename}";
-            exec("scp {$sshuser}@{$server[$s]}:{$backup} {$target}");
-
-            if($debug)
-                out($colors->getColoredString("Complete.", "green"));
-
-            // Calculate destination md5
-            if($debug)
-                echo "Calculating md5... ";
-            $md5dest = exec("md5sum {$target} | awk '{ print $1 }'");
-            if($debug)
-                out($colors->getColoredString("Done.", "green"));
-
-            // Compare
-            if($debug)
-                out("Comparing md5 sums:\n{$md5}\n{$md5dest}");
-            if($md5 != $md5dest)
-                out($colors->getColoredString("Md5 sums doesn't match! Continuing anyway.", "red"));
-            else if($debug)
-                out($colors->getColoredString("Md5 sums match.", "green"));
 
             // Create md5 file
             if($debug)
                 echo "Dumping md5 files... ";
 
-            exec("echo {$md5dest} > {$target}.md5");
-            exec("echo {$md5} > {$target}.md5remote");
+            exec("echo {$md5} > {$target}.md5");
 
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
-
-            // Remove tmp files
-            if($debug)
-                echo "Removing temporary files from remote server... ";
-
-            $vars['tmp'] = $ssh->exec("rm {$backup}");
-
-            if($debug && empty($vars['tmp']))
-                out($colors->getColoredString("Done.", "green"));
-            else if(!empty($vars['tmp']))
-                throw new Exception("Failed to remove {$backup} from {$server[$s]}:\n{$vars['tmp']}");
 
             // Remove old archives
             if($debug)

@@ -109,7 +109,7 @@ for($s = 0; $s < count($server); $s++)
         if($debug)
             echo "Removing old archives... ";
 
-        exec("nice -n {$nicelevel} ionice -c {$ionicelevel} rm -r {$archivedir}/{$hostname}");
+        exec("nice -n {$nicelevel} ionice -c {$ionicelevel} rm {$archivedir}/{$hostname}/*{$hostname}*");
 
         if($debug)
             out($colors->getColoredString("Done.", "green"));
@@ -143,30 +143,8 @@ for($s = 0; $s < count($server); $s++)
             // Filenames
             $filename = "{$folderclean}.encrypted";
             $backup = "{$tmpdir}/{$filename}";
-
-            // Create tar
-            if($debug)
-                echo "Creating encrypted tar... ";
-
-            $vars['tar'] = $ssh->exec(
-                    "nice -n {$nicelevel} ionice -c {$ionicelevel} tar zchf - -C / {$folder} {$exclude} |".
-                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \"{$archivepass}\" |".
-                            " nice -n {$nicelevel} ionice -c {$ionicelevel} dd of={$backup} 2> /dev/null");
-
-            if($debug && empty($vars['tar']))
-                out($colors->getColoredString("Done.", "green"));
-            else if(!empty($vars['tar']))
-                out($colors->getColoredString("{$vars['tar']}"));
-
-            // Calculate md5
-            if($debug)
-                echo "Calculating md5 sum... ";
-
-            $md5 = str_replace("\n", "", $ssh->exec("md5sum {$backup} | awk '{ print $1 }'"));
-
-            if($debug)
-                out($colors->getColoredString("Done.", "green"));
-
+            $target = "{$archivedir}/{$hostname}/{$filename}";
+            
             // Create destination folder
             if($debug)
                 echo "Creating destination folder... ";
@@ -175,51 +153,35 @@ for($s = 0; $s < count($server); $s++)
             else if($debug)
                 out($colors->getColoredString("Already exists.", "yellow"));
 
+            // Create tar
             if($debug)
-                echo "Transferring {$backup}... ";
+                echo "Creating encrypted tar... ";
+            
+            exec("nice -n {$nicelevel} ionice -c {$ionicelevel} ssh {$sshuser}@${server[$s]} \"".
+                    "nice -n {$nicelevel} ionice -c {$ionicelevel} tar zchf - -C / {$folder} {$exclude} |".
+                        " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \\\"{$archivepass}\\\"".
+                            "\" > {$target}");
 
-            // Transfer tar
-            $target = "{$archivedir}/{$hostname}/{$filename}";
-            exec("scp {$sshuser}@{$server[$s]}:{$backup} {$target}");
-
-            if($debug)
-                out($colors->getColoredString("Complete.", "green"));
-
-            // Calculate destination md5
-            if($debug)
-                echo "Calculating md5... ";
-            $md5dest = exec("md5sum {$target} | awk '{ print $1 }'");
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
-
-            // Compare
+            
+            // Calculate md5
             if($debug)
-                out("Comparing md5 sums:\n{$md5}\n{$md5dest}");
-            if($md5 != $md5dest)
-                out($colors->getColoredString("Md5 sums doesn't match! Continuing anyway.", "red"));
-            else if($debug)
-                out($colors->getColoredString("Md5 sums match.", "green"));
-
+                echo "Calculating md5 sum... ";
+                
+            $md5 = str_replace("\n", "", exec("md5sum {$target} | awk '{ print $1 }'"));
+            
+            if($debug)
+                out($colors->getColoredString("Done.", "green"));
+            
             // Create md5 file
             if($debug)
                 echo "Dumping md5 files... ";
 
-            exec("echo {$md5dest} > {$target}.md5");
-            exec("echo {$md5} > {$target}.md5remote");
+            exec("echo {$md5} > {$target}.md5");
 
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
-
-            // Remove tmp files
-            if($debug)
-                echo "Removing temporary files from remote server... ";
-
-            $vars['tmp'] = $ssh->exec("rm {$backup}");
-
-            if($debug && empty($vars['tmp']))
-                out($colors->getColoredString("Done.", "green"));
-            else if(!empty($vars['tmp']))
-                throw new Exception("Failed to remove {$backup} from {$server[$s]}:\n{$vars['tmp']}");
 
             if($debug)
                 out(" ");
