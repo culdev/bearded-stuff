@@ -158,7 +158,7 @@ for($s = 0; $s < count($server); $s++)
                 echo "Creating encrypted tar... ";
             
             exec("nice -n {$nicelevel} ionice -c {$ionicelevel} ssh {$sshuser}@${server[$s]} \"".
-                    "nice -n {$nicelevel} ionice -c {$ionicelevel} tar zchf - -C / {$folder} {$exclude} |".
+                    "nice -n {$nicelevel} ionice -c {$ionicelevel} tar chf - -C / {$folder} {$exclude} |".
                         " nice -n {$nicelevel} ionice -c {$ionicelevel} openssl des3 -salt -k \\\"{$archivepass}\\\"".
                             "\" > {$target}");
 
