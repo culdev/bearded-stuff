@@ -104,6 +104,15 @@ for($s = 0; $s < count($server); $s++)
             throw new Exception("SSH failed on server ${server[$s]}.");
 
         $hostname = str_replace("\n", "", $ssh->exec("hostname"));
+        
+        // Remove old archives
+        if($debug)
+            echo "Removing old archives... ";
+
+        exec("nice -n {$nicelevel} ionice -c {$ionicelevel} rm -r {$archivedir}/{$hostname}");
+
+        if($debug)
+            out($colors->getColoredString("Done.", "green"));
 
         // Go through each folder
         for($d = 0; $d < count($dirs[$s]); $d++)
@@ -154,15 +163,6 @@ for($s = 0; $s < count($server); $s++)
                 echo "Calculating md5 sum... ";
 
             $md5 = str_replace("\n", "", $ssh->exec("md5sum {$backup} | awk '{ print $1 }'"));
-
-            if($debug)
-                out($colors->getColoredString("Done.", "green"));
-
-            // Remove old archives
-            if($debug)
-                echo "Removing old archives... ";
-
-            exec("nice -n {$nicelevel} ionice -c {$ionicelevel} rm -r {$archivedir}/{$hostname}");
 
             if($debug)
                 out($colors->getColoredString("Done.", "green"));
