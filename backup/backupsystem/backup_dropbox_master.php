@@ -175,9 +175,6 @@ for($s = 0; $s < count($server); $s++)
                 out($colors->getColoredString("Done.", "green"));
 
             if($debug)
-                out($colors->getColoredString("Done.", "green"));
-
-            if($debug)
                 out(" ");
         }
     }
