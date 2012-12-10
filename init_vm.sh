@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # Settings
 NETWORKADAPTER="eth1"
@@ -43,6 +43,13 @@ cat /tmp/dotdeb.gpg | apt-key add -
 rm /tmp/dotdeb.gpg
 
 echo "Installed dotdeb repository."
+
+# Apt-get update
+echo "Executing apt-get update..."
+
+apt-get update
+
+echo "Done."
 
 # Debian Backports
 echo "Installing Debian Backports repository..."
