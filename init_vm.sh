@@ -14,6 +14,10 @@ NOATIME=1 # Comment to disable added noatime to root in /etc/fstab
 echo "Edit the script before running it."
 exit 1
 
+# /dev/shm
+echo "Symlinking $TMPRAM to /dev/shm."
+ln -s /dev/shm $TMPRAM
+
 # Update network adapter
 echo "Updating network interfaces..."
 
@@ -65,10 +69,6 @@ echo "Disabling mpt-statusd..."
 /etc/init.d/mpt-statusd stop
 update-rc.d-insserv -f mpt-statusd remove
 echo "Disabled mpt-statusd."
-
-# /dev/shm
-echo "Symlinking $TMPRAM to /dev/shm."
-ln -s /dev/shm $TMPRAM
 
 # crontab
 echo "Installing crontab template."
