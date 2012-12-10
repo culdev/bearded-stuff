@@ -73,7 +73,7 @@ echo "Disabled mpt-statusd."
 # crontab
 echo "Installing crontab template."
 echo "MAILTO=\"\"
-SHELL=/bin/sh
+SHELL=/bin/bash
 
 #minute (0-59)
 #|	hour (0-23)
@@ -108,42 +108,42 @@ fi
 
 # NOATIME
 if [ $NOATIME ]; then
-	echo "Adding noatime..."
-	
-	cp /etc/fstab $TMPRAM/fstab
-	
-	sed -i 's/errors=remount-ro/errors=remount-ro,noatime/g' $TMPRAM/fstab
-	
+    echo "Adding noatime..."
+    
+    cp /etc/fstab $TMPRAM/fstab
+    
+    sed -i 's/errors=remount-ro/errors=remount-ro,noatime/g' $TMPRAM/fstab
+    
     echo "Previewing changes..."
-	nano $TMPRAM/fstab
-	
-	echo "Write changes to /etc/fstab? (y/N)"
-	
-	fstabloop=1
-	
-	while [ $fstabloop -eq 1 ]; do
-		read RESPONSE;
-		case "$RESPONSE" in
-			[yY]|[yY][eE][sS])
-				echo "Copying /etc/fstab to /etc/fstab.bak..."
-				cp /etc/fstab /etc/fstab.bak
-				
-				echo "Writing changes to /etc/fstab..."
-				cp $TMPRAM/fstab /etc/fstab
-				rm $TMPRAM/fstab
-				
-				echo "Done."
-				fstabloop=0
-				;;
-			[nN]|[nN][oO]|"")
-				echo "Not saving changes..."
-				rm $TMPRAM/fstab
-				
-				fstabloop=0
+    nano $TMPRAM/fstab
+    
+    echo "Write changes to /etc/fstab? (y/N)"
+    
+    fstabloop=1
+    
+    while [ $fstabloop -eq 1 ]; do
+        read RESPONSE;
+        case "$RESPONSE" in
+            [yY]|[yY][eE][sS])
+                echo "Copying /etc/fstab to /etc/fstab.bak..."
+                cp /etc/fstab /etc/fstab.bak
+                
+                echo "Writing changes to /etc/fstab..."
+                cp $TMPRAM/fstab /etc/fstab
+                rm $TMPRAM/fstab
+                
+                echo "Done."
+                fstabloop=0
                 ;;
-			*)
-				echo "Write changes to /etc/fstab? (y/N)"
-				;;
+            [nN]|[nN][oO]|"")
+                echo "Not saving changes..."
+                rm $TMPRAM/fstab
+                
+                fstabloop=0
+                ;;
+            *)
+                echo "Write changes to /etc/fstab? (y/N)"
+                ;;
         esac
-	done
+    done
 fi
