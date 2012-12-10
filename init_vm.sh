@@ -45,19 +45,19 @@ rm /tmp/dotdeb.gpg
 
 echo "Installed dotdeb repository."
 
-# Apt-get update
-echo "Executing apt-get update..."
-
-apt-get update
-
-echo "Done."
-
 # Debian Backports
 echo "Installing Debian Backports repository..."
 echo "" >> $SOURCES
 echo "# Debian Backports" >> $SOURCES
 echo "deb http://backports.debian.org/debian-backports squeeze-backports main" >> $SOURCES
 echo "Installed Debian Backports repository."
+
+# apt-get update
+echo "Executing apt-get update..."
+
+apt-get update
+
+echo "Done."
 
 # mpt-statusd
 # Floods various logs with "mpt-statusd: detected non-optimal RAID status"
