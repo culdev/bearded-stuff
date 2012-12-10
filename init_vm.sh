@@ -7,6 +7,8 @@ NETWORKGATEWAY="10.10.1.1"
 NETWORKNETMASK="255.255.255.0"
 
 TMPRAM="/tmpram"
+RAMRUN=1 # Comment to disable /var/run in RAM
+RAMLOCK=1 # Comment to disable /var/lock in RAM
 
 echo "Edit the script before running it."
 exit 1
@@ -61,7 +63,7 @@ echo "Symlinking $TMPRAM to /dev/shm."
 ln -s /dev/shm $TMPRAM
 
 # crontab
-echo "Installing crontab template"
+echo "Installing crontab template."
 echo "MAILTO=\"\"
 SHELL=/bin/sh
 
@@ -77,3 +79,21 @@ SHELL=/bin/sh
 " > $TMPRAM/cron.template
 
 crontab $TMPRAM/cron.template
+
+# RAMRUN
+if [ $RAMRUN ] && grep -Fxq "RAMRUN=no" /etc/default/rcS ; then
+    echo "Enabling RAMRUN..."
+    
+    sed -i 's/RAMRUN=no/RAMRUN=yes/g' /etc/default/rcS
+    
+    echo "Done."
+fi;
+
+# RAMLOCK
+if [ $RAMLOCK ] && grep -Fxq "RAMLOCK=no" /etc/default/rcS ; then
+    echo "Enabling RAMLOCK..."
+    
+    sed -i 's/RAMLOCK=no/RAMLOCK=yes/g' /etc/default/rcS
+    
+    echo "Done."
+fi
