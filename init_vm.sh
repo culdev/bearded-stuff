@@ -9,6 +9,7 @@ NETWORKNETMASK="255.255.255.0"
 TMPRAM="/tmpram"
 RAMRUN=1 # Comment to disable /var/run in RAM
 RAMLOCK=1 # Comment to disable /var/lock in RAM
+NOATIME=1 # Comment to disable added noatime to root in /etc/fstab
 
 echo "Edit the script before running it."
 exit 1
@@ -103,4 +104,43 @@ if [ $RAMLOCK ] && grep -Fxq "RAMLOCK=no" /etc/default/rcS ; then
     sed -i 's/RAMLOCK=no/RAMLOCK=yes/g' /etc/default/rcS
     
     echo "Done."
+fi
+
+# NOATIME
+if [ $NOATIME ]; then
+	echo "Adding noatime..."
+	
+	cp /etc/fstab $TMPRAM/fstab
+	
+	sed -i 's/errors=remount-ro/errors=remount-ro,noatime/g' $TMPRAM/fstab
+	
+	less $TMPRAM/fstab
+	
+	echo "Write changes to /etc/fstab? (y/n)"
+	
+	fstabloop=1
+	
+	while [ $fstabloop -eq 1 ]; do
+		read RESPONSE;
+		case "$RESPONSE" in
+			[yY]|[yY][eE][sS])
+				echo "Copying /etc/fstab to /etc/fstab.bak..."
+				cp /etc/fstab /etc/fstab.bak
+				
+				echo "Writing changes to /etc/fstab..."
+				cp $TMPRAM/fstab /etc/fstab
+				rm $TMPRAM/fstab
+				
+				echo "Done."
+				$fstabloop=0
+				;;
+			[nN]|[nN][oO]|"")
+				echo "Not saving changes..."
+				rm $TMPRAM/fstab
+				
+				$fstabloop=0
+			*)
+				echo "Invalid response."
+				;;
+	done;
 fi
