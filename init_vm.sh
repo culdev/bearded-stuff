@@ -114,9 +114,10 @@ if [ $NOATIME ]; then
 	
 	sed -i 's/errors=remount-ro/errors=remount-ro,noatime/g' $TMPRAM/fstab
 	
-	less $TMPRAM/fstab
+    echo "Previewing changes..."
+	nano $TMPRAM/fstab
 	
-	echo "Write changes to /etc/fstab? (y/n)"
+	echo "Write changes to /etc/fstab? (y/N)"
 	
 	fstabloop=1
 	
@@ -132,15 +133,17 @@ if [ $NOATIME ]; then
 				rm $TMPRAM/fstab
 				
 				echo "Done."
-				$fstabloop=0
+				fstabloop=0
 				;;
 			[nN]|[nN][oO]|"")
 				echo "Not saving changes..."
 				rm $TMPRAM/fstab
 				
-				$fstabloop=0
+				fstabloop=0
+                ;;
 			*)
 				echo "Invalid response."
 				;;
-	done;
+        esac
+	done
 fi
