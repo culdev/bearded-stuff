@@ -11,6 +11,10 @@ RAMRUN=1 # Comment to disable /var/run in RAM
 RAMLOCK=1 # Comment to disable /var/lock in RAM
 NOATIME=1 # Comment to disable added noatime to root in /etc/fstab
 
+MAIL_ENABLE=1 # Comment to disable exim4 config
+MAIL_DOMAIN=""
+MAIL_HOSTNAME=`hostname`
+
 echo "Edit the script before running it."
 exit 1
 
@@ -146,4 +150,46 @@ if [ $NOATIME ]; then
                 ;;
         esac
     done
+fi
+
+# Exim4 config
+if [ $MAIL_ENABLE ]; then
+    echo "Updating exim4 config..."
+    cp /etc/update-exim4.conf.conf /etc/update-exim4.conf.conf.bak
+    echo "# /etc/exim4/update-exim4.conf.conf
+#
+# Edit this file and /etc/mailname by hand and execute update-exim4.conf
+# yourself or use 'dpkg-reconfigure exim4-config'
+#
+# Please note that this is _not_ a dpkg-conffile and that automatic changes
+# to this file might happen. The code handling this will honor your local
+# changes, so this is usually fine, but will break local schemes that mess
+# around with multiple versions of the file.
+#
+# update-exim4.conf uses this file to determine variable values to generate
+# exim configuration macros for the configuration file.
+#
+# Most settings found in here do have corresponding questions in the
+# Debconf configuration, but not all of them.
+#
+# This is a Debian specific file
+
+dc_eximconfig_configtype='internet'
+dc_other_hostnames='$MAIL_HOSTNAME'
+dc_local_interfaces='127.0.0.1 ; ::1'
+dc_readhost='$MAIL_DOMAIN'
+dc_relay_domains=''
+dc_minimaldns='false'
+dc_relay_nets=''
+dc_smarthost=''
+CFILEMODE='644'
+dc_use_split_config='false'
+dc_hide_mailname='true'
+dc_mailname_in_oh='true'
+dc_localdelivery='mail_spool'
+" > /etc/update-exim4.conf.conf
+    echo "Done."
+    echo "Restarting Exim4..."
+    /etc/init.d/exim4 restart
+    echo "Done."
 fi
