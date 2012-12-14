@@ -139,7 +139,7 @@ for($s = 0; $s < count($server); $s++)
             // Create destination folder
             if($debug)
                 echo "Creating destination folder... ";
-            if($debug && @mkdir("{$archivedir}/{$hostname}"))
+            if(@mkdir("{$archivedir}/{$hostname}") && $debug)
                 out($colors->getColoredString("Done.", "green"));
             else if($debug)
                 out($colors->getColoredString("Already exists.", "yellow"));
