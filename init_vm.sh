@@ -155,7 +155,7 @@ fi
 # Exim4 config
 if [ $MAIL_ENABLE ]; then
     echo "Updating exim4 config..."
-    cp /etc/update-exim4.conf.conf /etc/update-exim4.conf.conf.bak
+    cp /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.bak
     echo "# /etc/exim4/update-exim4.conf.conf
 #
 # Edit this file and /etc/mailname by hand and execute update-exim4.conf
