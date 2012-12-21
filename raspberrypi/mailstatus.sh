@@ -1,0 +1,41 @@
+#!/bin/bash
+TMP=/tmp/status
+MAIL="some@mail.com"
+SUBJECT="Pi Status"
+
+echo "<html><body><p>" > $TMP
+
+# Get cpu information
+cpucurfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq)
+cpuminfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq)
+cpumaxfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq)
+cpugovernor=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
+cputemp=$(cat /sys/class/thermal/thermal_zone0/temp)
+cpuusage=$(eval $(awk '/^cpu /{print "previdle=" $5 "; prevtotal=" $2+$3+$4+$5 }' /proc/stat); sleep 0.4; eval $(awk '/^cpu /{print "idle=" $5 "; total=" $2+$3+$4+$5 }' /proc/stat); intervaltotal=$((total-${prevtotal:-0})); echo "$((100*( (intervaltotal) - ($idle-${previdle:-0}) ) / (intervaltotal) ))")"%"
+
+echo "<b>CPU Information:</b><pre>
+CPU governor:		$cpugovernor
+CPU frequency cur:	$(($cpucurfreq/1000)) MHz
+CPU frequency min:	$(($cpuminfreq/1000)) MHz
+CPU frequency max:	$(($cpumaxfreq/1000)) MHz
+CPU temperature:	$(($cputemp/1000))C
+CPU usage:		$cpuusage
+</pre>" >> $TMP
+
+# Disk stats
+echo "<br><b>Disk stats:</b><br><pre>" >> $TMP
+df -h >> $TMP
+echo "</pre>" >> $TMP
+
+# Syslog
+echo "<br><b>Latest 10 lines from syslog:</b><br><pre>" >> $TMP
+tail -n 10 /var/log/syslog >> $TMP
+echo "</pre>" >> $TMP
+
+# Close html
+echo "</p></body></html>" >> $TMP
+
+# Mail it!
+mutt -n -e "set copy=no" -e "set content_type=text/html" $MAIL -s "$SUBJECT" < $TMP
+
+rm $TMP
