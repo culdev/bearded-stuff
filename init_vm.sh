@@ -188,6 +188,7 @@ dc_hide_mailname='true'
 dc_mailname_in_oh='true'
 dc_localdelivery='mail_spool'
 " > /etc/update-exim4.conf.conf
+    update-exim4.config -v
     echo "Done."
     echo "Restarting Exim4..."
     /etc/init.d/exim4 restart
