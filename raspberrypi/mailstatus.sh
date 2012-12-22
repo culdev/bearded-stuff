@@ -3,7 +3,7 @@ TMP=/tmp/status
 MAIL="some@mail.com"
 SUBJECT="Pi Status"
 
-echo "<html><body><p>" > $TMP
+echo "<html><head></head><body><p>" > $TMP
 
 # Get cpu information
 cpucurfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq)
@@ -22,14 +22,34 @@ CPU temperature:	$(($cputemp/1000))C
 CPU usage:		$cpuusage
 </pre>" >> $TMP
 
+# Latest processes
+echo "<br><b>Ten latest cpu intensive processes:</b><br><pre>" >> $TMP
+top -b -n 1 | head -n 17 | tail -n 11 >> $TMP
+echo "</pre>" >> $TMP
+
 # Disk stats
 echo "<br><b>Disk stats:</b><br><pre>" >> $TMP
 df -h >> $TMP
 echo "</pre>" >> $TMP
 
-# Syslog
-echo "<br><b>Latest 10 lines from syslog:</b><br><pre>" >> $TMP
+# syslog
+echo "<br><b>Latest ten lines from syslog:</b><br><pre>" >> $TMP
 tail -n 10 /var/log/syslog >> $TMP
+echo "</pre>" >> $TMP
+
+# auth.log
+echo "<br><b>Latest ten lines from auth.log:</b><br><pre>" >> $TMP
+tail -n 10 /var/log/auth.log >> $TMP
+echo "</pre>" >> $TMP
+
+# user.log
+echo "<br><b>Latest ten lines from user.log:</b><br><pre>" >> $TMP
+tail -n 10 /var/log/user.log >> $TMP
+echo "</pre>" >> $TMP
+
+# update-checker log
+echo "<br><b>Update-checker from user.log:</b><br><pre>" >> $TMP
+cat /var/log/user.log | grep "update-checker" >> $TMP
 echo "</pre>" >> $TMP
 
 # Close html
