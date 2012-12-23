@@ -12,7 +12,7 @@ $dirs = array(0 => array("etc", "var"), 1 => array("home", "etc"));
 $dirsblacklist = array(0 => array(), 1 => array("home/somedude"));
 $days = "+1"; // Amount of days to keep the backups
 
-/ SSH Settings
+// SSH Settings
 $keyfile = "id_rsa";
 $sshuser = "backupuser";
 $tmpdir = "/tmp"; // On remote server
