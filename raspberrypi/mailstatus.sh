@@ -4,19 +4,24 @@ MAIL="some@mail.com"
 SUBJECT="Pi Status"
 
 echo "<html><head><style type=\"text/css\">
+.theTitle {
+    margin: 0 0 5px 0;
+    font-weight: bold;
+}
 #wrap {
-    width: 100%;
-    position: relative;
+    margin: 0 0 10px 0;
 }
 #one {
     float:left;
     width: 20%;
+    margin: 0 0 10px 0;
 }
 #two {
     float:right;
     width: 80%;
+    margin: 0 0 10px 0;
 }
-</style></head><body><p>" > $TMP
+</style></head><body>" > $TMP
 
 # Get cpu information
 cpucurfreq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq)
@@ -28,8 +33,8 @@ cputempthrottle=$(cat /sys/class/thermal/thermal_zone0/trip_point_0_temp)
 cpuusage=$(eval $(awk '/^cpu /{print "previdle=" $5 "; prevtotal=" $2+$3+$4+$5 }' /proc/stat); sleep 0.4; eval $(awk '/^cpu /{print "idle=" $5 "; total=" $2+$3+$4+$5 }' /proc/stat); intervaltotal=$((total-${prevtotal:-0})); echo "$((100*( (intervaltotal) - ($idle-${previdle:-0}) ) / (intervaltotal) ))")"%"
 uptime=$(uptime | sed -e "s/$(date '+%H:%M:%S')//g")
 
-echo "<b>System Information:</b>
-<div id=\"wrap\">
+echo "<div id=\"wrap\">
+    <p class=\"theTitle\">System Information:</p>
     <div id=\"one\">
         CPU governor:<br>
         CPU frequency current:<br>
@@ -58,50 +63,60 @@ echo "<b>System Information:</b>
     </div>
 </div>" >> $TMP
 
+# Memory info
+echo "<p class=\"theTitle\">Memory information:</p><pre>" >> $TMP
+free -m >> $TMP
+echo "</pre>" >> $TMP
+
 # Latest processes
-echo "<br><b>Ten latest cpu intensive processes:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Ten latest cpu intensive processes:</p><pre>" >> $TMP
 top -b -n 1 | head -n 17 | tail -n 11 >> $TMP
 echo "</pre>" >> $TMP
 
 # Disk stats
-echo "<br><b>Disk stats:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Disk stats:</p><pre>" >> $TMP
 df -h >> $TMP
 echo "</pre>" >> $TMP
 
+# iostat
+echo "<p class=\"theTitle\">Iostat:</p><pre>" >> $TMP
+iostat >> $TMP
+echo "</pre>" >> $TMP
+
 # syslog
-echo "<br><b>Latest ten lines from syslog:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Latest ten lines from syslog:</p><pre>" >> $TMP
 tail -n 10 /var/log/syslog >> $TMP
 echo "</pre>" >> $TMP
 
 # auth.log
-echo "<br><b>Latest ten lines from auth.log:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Latest ten lines from auth.log:</p><pre>" >> $TMP
 tail -n 10 /var/log/auth.log >> $TMP
 echo "</pre>" >> $TMP
 
 # user.log
-echo "<br><b>Latest ten lines from user.log:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Latest ten lines from user.log:</p><pre>" >> $TMP
 tail -n 10 /var/log/user.log >> $TMP
 echo "</pre>" >> $TMP
 
 # update-checker log
-echo "<br><b>Update-checker from user.log:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Update-checker from user.log:</p><pre>" >> $TMP
 cat /var/log/user.log | grep "update-checker" | tail -n 30 >> $TMP
 echo "</pre>" >> $TMP
 
 # /proc/meminfo
-echo "<br><b>Proc meminfo:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Proc meminfo:</p><pre>" >> $TMP
 cat /proc/meminfo >> $TMP
 echo "</pre>" >> $TMP
 
 # /proc/swaps
-echo "<br><b>Swaps:</b><br><pre>" >> $TMP
+echo "<p class=\"theTitle\">Swaps:</p><pre>" >> $TMP
 cat /proc/swaps >> $TMP
 echo "</pre>" >> $TMP
 
 
 
 # Close html
-echo "</p></body></html>" >> $TMP
+echo "</body></html>" >> $TMP
 
 # Mail it!
 mutt -n -e "set copy=no" -e "set content_type=text/html" $MAIL -s "$SUBJECT" < $TMP
