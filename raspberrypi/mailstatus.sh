@@ -13,8 +13,9 @@ cpugovernor=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
 cputemp=$(cat /sys/class/thermal/thermal_zone0/temp)
 cputempthrottle=$(cat /sys/class/thermal/thermal_zone0/trip_point_0_temp)
 cpuusage=$(eval $(awk '/^cpu /{print "previdle=" $5 "; prevtotal=" $2+$3+$4+$5 }' /proc/stat); sleep 0.4; eval $(awk '/^cpu /{print "idle=" $5 "; total=" $2+$3+$4+$5 }' /proc/stat); intervaltotal=$((total-${prevtotal:-0})); echo "$((100*( (intervaltotal) - ($idle-${previdle:-0}) ) / (intervaltotal) ))")"%"
+uptime=$(uptime)
 
-echo "<b>CPU Information:</b><pre>
+echo "<b>Information:</b><pre>
 CPU governor:		  $cpugovernor
 CPU frequency cur:	  $(($cpucurfreq/1000)) MHz
 CPU frequency min:	  $(($cpuminfreq/1000)) MHz
@@ -22,6 +23,7 @@ CPU frequency max:	  $(($cpumaxfreq/1000)) MHz
 CPU temperature:	  $(($cputemp/1000))C
 CPU throttle temperature: $(($cputempthrottle/1000))C
 CPU usage:		  $cpuusage
+Uptime:			 $uptime
 </pre>" >> $TMP
 
 # Latest processes
@@ -51,7 +53,12 @@ echo "</pre>" >> $TMP
 
 # update-checker log
 echo "<br><b>Update-checker from user.log:</b><br><pre>" >> $TMP
-cat /var/log/user.log | grep "update-checker" >> $TMP
+cat /var/log/user.log | grep "update-checker" | tail -n 30 >> $TMP
+echo "</pre>" >> $TMP
+
+# /proc/meminfo
+echo "<br><b>Proc meminfo:</b><br><pre>" >> $TMP
+cat /proc/meminfo >> $TMP
 echo "</pre>" >> $TMP
 
 # Close html
