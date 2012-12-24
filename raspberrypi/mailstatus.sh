@@ -26,14 +26,15 @@ cpugovernor=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
 cputemp=$(cat /sys/class/thermal/thermal_zone0/temp)
 cputempthrottle=$(cat /sys/class/thermal/thermal_zone0/trip_point_0_temp)
 cpuusage=$(eval $(awk '/^cpu /{print "previdle=" $5 "; prevtotal=" $2+$3+$4+$5 }' /proc/stat); sleep 0.4; eval $(awk '/^cpu /{print "idle=" $5 "; total=" $2+$3+$4+$5 }' /proc/stat); intervaltotal=$((total-${prevtotal:-0})); echo "$((100*( (intervaltotal) - ($idle-${previdle:-0}) ) / (intervaltotal) ))")"%"
+uptime=$(uptime | sed -e "s/$(date '+%H:%M:%S')//g")
 
 echo "<b>System Information:</b>
 <div id=\"wrap\">
     <div id=\"one\">
         CPU governor:<br>
-        CPU frequency cur:<br>
-        CPU frequency min:<br>
-        CPU frequency max:<br>
+        CPU frequency current:<br>
+        CPU frequency minimum:<br>
+        CPU frequency maximum:<br>
         CPU temperature:<br>
         CPU throttle temperature:<br>
         CPU usage:<br>
@@ -50,7 +51,7 @@ echo "<b>System Information:</b>
         $(($cputemp/1000))C<br>
         $(($cputempthrottle/1000))C<br>
         $cpuusage<br>
-        $(uptime)<br>
+        $uptime<br>
         $(hostname)<br>
         $(cat /etc/debian_version)<br>
         $(uname -a)<br>
