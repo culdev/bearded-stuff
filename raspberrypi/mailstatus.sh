@@ -83,6 +83,11 @@ echo "<p class=\"theTitle\">Iostat:</p><pre>" >> $TMP
 iostat >> $TMP
 echo "</pre>" >> $TMP
 
+# w
+echo "<p class=\"theTitle\">w:</p><pre>" >> $TMP
+w >> $TMP
+echo "</pre>" >> $TMP
+
 # syslog
 echo "<p class=\"theTitle\">Latest ten lines from syslog:</p><pre>" >> $TMP
 tail -n 10 /var/log/syslog >> $TMP
