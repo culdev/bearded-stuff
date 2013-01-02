@@ -65,7 +65,7 @@ echo "<div id=\"wrap\">
 
 # Memory info
 echo "<p class=\"theTitle\">Memory information:</p><pre>" >> $TMP
-free -m >> $TMP
+free -mhlt >> $TMP
 echo "</pre>" >> $TMP
 
 # Latest processes
