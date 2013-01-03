@@ -175,7 +175,7 @@ if [ $MAIL_ENABLE ]; then
 dc_eximconfig_configtype='internet'
 dc_other_hostnames='$MAIL_HOSTNAME'
 dc_local_interfaces='127.0.0.1 ; ::1'
-dc_readhost='$MAIL_DOMAIN'
+dc_readhost=''
 dc_relay_domains=''
 dc_minimaldns='false'
 dc_relay_nets=''
@@ -185,7 +185,8 @@ dc_use_split_config='false'
 dc_hide_mailname='true'
 dc_mailname_in_oh='true'
 dc_localdelivery='mail_spool'
-" > /etc/update-exim4.conf.conf
+" > /etc/exim4/update-exim4.conf.conf
+    echo "$MAIL_DOMAIN" > /etc/mailname
     update-exim4.conf -v
     echo "Done."
     echo "Restarting Exim4..."
