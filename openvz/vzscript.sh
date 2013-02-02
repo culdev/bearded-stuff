@@ -48,7 +48,7 @@ case "$1" in
     *)
     echo -e "Usage: $(basename $0) OPTION...
 
-help                          Displays this text.
+help                        Displays this text.
 bridge {CTID}               Removes eth0 and bridges eth0 and eth1 with host.
 burstmemory {CTID} {GM} {BM}
                             Adds burst memory to CTID.
