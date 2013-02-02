@@ -12,7 +12,7 @@ isSet()
 
 case "$1" in
     # Bridge network
-    -b)
+    bridge)
         if ! isSet "$2"; then
             echo "Requires container id."
             exit 1
@@ -27,7 +27,7 @@ case "$1" in
     ;;
     
     # Burst memory
-    -bm)
+    burstmemory)
         ct=$2
         guarmem=$3
         burstmem=$4
@@ -48,9 +48,10 @@ case "$1" in
     *)
     echo -e "Usage: $(basename $0) OPTION...
 
--h                          Displays this text.
--b {CTID}                   Removes eth0 and bridges eth0 and eth1 with host.
--bm {CTID} {GM} {BM}        Adds burst memory to CTID.
+help                          Displays this text.
+bridge {CTID}               Removes eth0 and bridges eth0 and eth1 with host.
+burstmemory {CTID} {GM} {BM}
+                            Adds burst memory to CTID.
                              GM = Guaranteed memory
                              BM = Burst memory"
     ;;
