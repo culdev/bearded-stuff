@@ -59,6 +59,7 @@ Initiates container id 100 with eth1 ip 10.10.1.23"
         fi
         
         vzctl stop $ctid
+        vzctl umount $ctid
         $0 bridge $ctid
         vzctl start $ctid
         
