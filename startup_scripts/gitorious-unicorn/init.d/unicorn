@@ -1,0 +1,62 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          unicorn
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Unicorn for Gitorious
+# Description:       Starts Unicorn for Gitorious
+### END INIT INFO
+
+SCRIPT=/var/www/gitorious/bin/unicorn
+PIDFILE=/var/run/unicorn.pid
+SOCKET=/var/www/gitorious/tmp/pids/unicorn.sock
+SSD=/sbin/start-stop-daemon
+SSD_ARGS="-c /var/www/gitorious/config/unicorn.rb"
+
+start()
+{
+    echo -n "Starting daemon: "
+
+    if $SSD --stop --quiet --pidfile $PIDFILE --signal 0
+    then
+        echo "already running"
+        exit
+    fi
+
+    $SSD --start --background --make-pidfile --pidfile $PIDFILE --exec $SCRIPT  -- $SSD_ARGS
+    echo "done."
+}
+
+stop()
+{
+    echo -n "Stopping Daemon: "
+    $SSD --stop --pidfile $PIDFILE
+    rm -f $PIDFILE
+    rm -f $SOCKET
+    echo "done."
+}
+
+case "$1" in
+	start)
+		start
+		;;
+
+	stop)
+		stop
+		;;
+        
+    restart)
+        stop
+        start
+        ;;
+
+	*)
+		echo "Usage: $0 { start | stop | restart }"
+        
+        exit 2
+		;;
+esac
+exit 0
+
