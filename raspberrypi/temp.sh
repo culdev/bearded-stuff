@@ -36,10 +36,6 @@ if [ -t 0 ]; then
   stty -echo -icanon time 0 min 0
 fi
 
-
-tput cup 10 0
-printf "CPU governor: "`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`
-
 keypressed=""
 while [ "x$keypressed" = "x" ]
    do
@@ -81,6 +77,9 @@ while [ "x$keypressed" = "x" ]
       printf "/"
       tput cup 9 30
       printf $(($cpufreqmax/1000))" MHz "
+      
+      tput cup 10 0
+      printf "CPU governor: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
       
       tput cup 11 0
       printf "CPU Usage:"
