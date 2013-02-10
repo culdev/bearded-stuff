@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 FROM="/var/lib/dhcp/"
 TO="/var/lib/dhcp_persist/"
