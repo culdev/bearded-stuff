@@ -76,7 +76,8 @@ Initiates container id 100 with eth1 ip 10.10.1.23"
 iface eth1 inet static
     address 10.10.1.$eth1ip
     netmask 255.255.255.0
-    gateway 10.10.1.1\" >> /etc/network/interfaces"
+    gateway 10.10.1.1
+    metric 10\" >> /etc/network/interfaces"
         else
             echo "Only debian is supported for now."
         fi
